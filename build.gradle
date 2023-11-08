@@ -27,3 +27,14 @@ dependencies {
 tasks.named('test') {
     useTestNG()
 }
+
+// Create executable Jar
+jar {
+    manifest {
+        attributes "Main-Class": "de.fhdw.aiwars.Main"
+    }
+
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
