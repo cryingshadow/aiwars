@@ -28,7 +28,7 @@ tasks.named('test') {
     useTestNG()
 }
 
-// Create executable Jar
+// Apply path to Main-Class for the exec jar
 jar {
     manifest {
         attributes "Main-Class": "de.fhdw.aiwars.Main"
