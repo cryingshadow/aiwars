@@ -55,6 +55,25 @@ public class GameTest {
     }
 
     @Test
+    public void simpleStrategyWins() {
+        //Get all 3 different Strategies
+        final Player[] players = TestData.getAllStrategiesPlayers();
+        final GameMap map = TestData.getAdvancedMap();
+        final Game game = new Game(map, players, 15);
+        for(int i = 0; i < 20; i++){
+            if(game.getWinners().isPresent()){
+                break;
+            }
+            else {
+                game.turn();
+            }
+        }
+        //System.out.println("Game.getWinners - simple: " + game.getWinners().get());
+        //Test if Winner is Player 2 (Player2 = SimpleStrategy)
+        Assert.assertEquals(game.getWinners().get().get(0), Integer.valueOf(2));
+    }
+
+    @Test
     public void turn() {
         final Player[] players =
             new Player[] {
