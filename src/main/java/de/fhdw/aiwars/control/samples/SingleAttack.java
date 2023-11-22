@@ -22,7 +22,7 @@ public class SingleAttack implements Player {
                 }
                 final GameField actualTargetField = targetField.get();
                 if (
-                    actualTargetField.getPlayer() == playerId || actualTargetField.getAmount() > fromField.getAmount()
+                    actualTargetField.getPlayer() == playerId || actualTargetField.getAmount() >= fromField.getAmount()
                 ) {
                     continue;
                 }
