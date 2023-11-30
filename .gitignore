@@ -31,3 +31,5 @@ replay_pid*
 .settings/
 gradlew*
 test-output/
+
+.idea/

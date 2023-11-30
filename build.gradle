@@ -28,3 +28,14 @@ dependencies {
 tasks.named('test') {
     useTestNG()
 }
+
+// Apply path to Main-Class for the exec jar
+jar {
+    manifest {
+        attributes "Main-Class": "de.fhdw.aiwars.Main"
+    }
+
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
