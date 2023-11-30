@@ -65,7 +65,7 @@ public class Main {
 
     private static Player[] initializePlayers() {
         // TODO Auto-generated method stub
-        return new Player[]{new SimpleStrategy(), new SingleAttack(), new JustGrow(), new SimpleStrategy()};
+        return new Player[]{new SimpleStrategy(), new SingleAttack(), new JustGrow(), new SimpleStrategy(), new ApiPlayer()};
     }
 
 }
