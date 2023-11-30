@@ -22,6 +22,7 @@ repositories {
 // In this section you declare the dependencies for your production and test code
 dependencies {
     testImplementation 'org.testng:testng:7.7.1'
+    implementation group: 'com.google.code.gson', name: 'gson', version: '2.10.1'
 }
 
 tasks.named('test') {
