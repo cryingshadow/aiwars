@@ -6,13 +6,20 @@
  * For more details take a look at the Java Quickstart chapter in the Gradle
  * user guide available at https://docs.gradle.org/3.0/userguide/tutorial_java_projects.html
  */
-
 // Apply the java plugin to add support for Java
+
+
 plugins {
     id 'application'
     id 'eclipse'
+    id 'idea'
+    id 'java'
+    id 'com.bmuschko.docker-spring-boot-application' version '6.1.4'
+    id 'com.bmuschko.docker-remote-api' version '6.7.0'
 }
 
+import com.bmuschko.gradle.docker.tasks.image.*
+import com.bmuschko.gradle.docker.tasks.container.*
 
 // In this section you declare where to find the dependencies of your project
 repositories {
@@ -22,12 +29,18 @@ repositories {
 // In this section you declare the dependencies for your production and test code
 dependencies {
     testImplementation 'org.testng:testng:7.7.1'
+    implementation group: 'com.google.code.gson', name: 'gson', version: '2.10.1'
 }
 
 tasks.named('test') {
     useTestNG()
+    createDockerFile(type)
 }
 
+compileJava {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
 // Apply path to Main-Class for the exec jar
 jar {
     manifest {
@@ -39,4 +52,55 @@ jar {
     }
 }
 
-//test12
+def ourContainerName = 'testimage'
+
+task createDockerFile(type: Dockerfile) {
+    from 'openjdk:8-jre-alpine'
+    copyFile jar.archiveFileName.get(), '/app/test_service.jar'
+    entryPoint 'java'
+    defaultCommand '-jar', '/app/test_service.jar'
+    exposePort 8080
+}
+
+task syncJar(type: Copy) {
+    dependsOn assemble
+    from jar.destinationDirectory
+    into "$buildDir/docker"
+}
+
+task buildImage(type: DockerBuildImage) {
+    dependsOn createDockerFile, syncJar
+    inputDir = createDockerFile.getDestDir()
+    images = ["ocramir/testimage:1.0"]
+}
+
+task stopContainer(type: DockerStopContainer) {
+    targetContainerId("$ourContainerName")
+    onError { exception -> handleError(exception) }
+}
+
+task removeContainer(type: DockerRemoveContainer) {
+    dependsOn stopContainer
+    targetContainerId("$ourContainerName")
+    onError { exception -> handleError(exception) }
+}
+
+task createContainer(type: DockerCreateContainer) {
+    dependsOn buildImage, removeContainer
+    targetImageId buildImage.getImageId()
+    containerName = "$ourContainerName"
+    hostConfig.portBindings = ['8080:8080']
+}
+
+task startContainer(type: DockerStartContainer) {
+    dependsOn createContainer
+    targetContainerId("$ourContainerName")
+}
+
+private void handleError(Throwable exc) {
+    if (exc.message != null &&
+            !exc.message.contains('NotModifiedException') &&
+            !exc.message.contains('No such container')) {
+        throw new RuntimeException(exc)
+    }
+}
