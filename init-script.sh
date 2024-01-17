@@ -4,5 +4,4 @@
 # The pre-commit hook protects you from checking in faulty/non-executable code into
 # all branches of the repository.
 
-
-cp /hooks/pre-commit /.git/hooks
+cp 'hooks/pre-commit' '.git/hooks'
