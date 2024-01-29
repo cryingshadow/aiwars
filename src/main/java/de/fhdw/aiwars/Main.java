@@ -8,15 +8,43 @@ import de.fhdw.aiwars.control.samples.*;
 import de.fhdw.aiwars.generators.*;
 import de.fhdw.aiwars.model.*;
 import de.fhdw.aiwars.view.*;
+import javafx.application.Application;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import javafx.fxml.FXMLLoader;
 
 /**
  * @author Thomas Stroeder
  */
-public class Main {
+public class Main { //For JavaFX add following: extends Application
+
+    /*@Override
+    public void start(Stage primaryStage) throws Exception {
+
+        Parent root = null;
+
+        try {
+            root = FXMLLoader.load(getClass().getResource("scene.fxml"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Scene scene = new Scene(root);
+        scene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
+
+        primaryStage.setTitle("AI Wars");
+
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }*/
 
     private static final Logger LOG = Logger.getLogger(Main.class.getName());
 
+    private static MainFrame test;
+
     public static void main(final String[] args) {
+        //launch(args);
         final Logger rootLogger = Logger.getLogger("");
         rootLogger.setLevel( Level.INFO );
         rootLogger.getHandlers()[0].setLevel( Level.INFO );
@@ -33,6 +61,7 @@ public class Main {
         final GameMap initialMap = Main.initializeMap(width, height, players);
         final Game game = new Game(initialMap, players, 1000);
         final MainFrame frame = new MainFrame(game);
+        //test = frame;
         frame.pack();
         frame.setVisible(true);
     }

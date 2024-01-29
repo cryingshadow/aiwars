@@ -11,6 +11,7 @@
 plugins {
     id 'application'
     id 'eclipse'
+    id 'org.openjfx.javafxplugin' version '0.1.0'
 }
 
 
@@ -28,6 +29,11 @@ tasks.named('test') {
     useTestNG()
 }
 
+javafx {
+    version = "21.0.1"
+    modules = [ 'javafx.controls', 'javafx.fxml' ]
+}
+
 // Apply path to Main-Class for the exec jar
 jar {
     manifest {
@@ -37,4 +43,7 @@ jar {
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
+    duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
 }
+
+mainClassName = 'de.fhdw.aiwars.Main'

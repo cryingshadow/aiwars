@@ -5,6 +5,8 @@ import java.awt.*;
 import javax.swing.*;
 
 import de.fhdw.aiwars.control.*;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
 public class MainFrame extends JFrame {
 
@@ -21,7 +23,27 @@ public class MainFrame extends JFrame {
 
     private static final long serialVersionUID = -8973960042014040243L;
 
+    /*private static final int WIDTH = 750;
+    private static final int HEIGHT = 500;
+    private static Stage stage;
+    private static Scene startScene;
+    private static Scene displayScene;
+    private static GameDisplay board;
+    private static ControlPanel buttonMenu;
+
+    public void Interface () {
+    }*/
+
     public MainFrame(final Game game) {
+        /*Stage stage = new Stage();
+        stage.setTitle("aiwars");
+        stage.setResizable(true);
+        stage.setHeight(750);
+        stage.setWidth(1200);
+
+        board = new GameDisplay(game, 50);
+        buttonMenu = new ControlPanel(new GameControl(game));*/
+
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         final Container content = this.getContentPane();
         content.setLayout(new FlowLayout());
@@ -30,3 +52,6 @@ public class MainFrame extends JFrame {
     }
 
 }
+/*
+-
+ */
