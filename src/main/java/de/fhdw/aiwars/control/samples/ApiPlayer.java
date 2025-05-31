@@ -1,111 +1,103 @@
 package de.fhdw.aiwars.control.samples;
 
-import java.lang.reflect.Type;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.*;
+import java.net.*;
+import java.net.http.*;
+import java.util.*;
 
-import javax.swing.text.Style;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import com.google.gson.*;
+import com.google.gson.reflect.*;
 
 import de.fhdw.aiwars.control.*;
 import de.fhdw.aiwars.model.*;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 public class ApiPlayer implements Player {
-    public class TurnElement {
-        public TurnElement(int x, int y, int player, int count){
-            this.x = x;
-            this.y = y;
-            this.player = player;
-            this.count = count;
-        }
-        int x;
-        int y;
-        int player;
-        int count;
-
-        public int getX() {
-            return x;
-        }
-
-        public int getY() {
-            return y;
-        }
-
-        public int getPlayer() {
-            return player;
-        }
-
-        public int getCount() {
-            return count;
-        }
-
-        public void setX(int x) {
-            this.x = x;
-        }
-
-        public void setY(int y) {
-            this.y = y;
-        }
-
-        public void setPlayer(int player) {
-            this.player = player;
-        }
-
-        public void setCount(int count) {
-            this.count = count;
-        }
-    }
-
     public class TurnDto {
-        public TurnDto(List<TurnElement> turnElementList, int playerId) {
-            this.turnElementList = turnElementList;
-            this.playerId = playerId;
-        }
+        int playerId;
 
         List<TurnElement> turnElementList;
 
-        public List<TurnElement> getTurnElementList() {
-            return turnElementList;
-        }
-
-        public void setTurnElementList(List<TurnElement> turnElementList) {
+        public TurnDto(final List<TurnElement> turnElementList, final int playerId) {
             this.turnElementList = turnElementList;
-        }
-
-        int playerId;
-
-        public void setPlayerId(int playerId) {
             this.playerId = playerId;
         }
 
         public int getPlayerId() {
-            return playerId;
+            return this.playerId;
+        }
+
+        public List<TurnElement> getTurnElementList() {
+            return this.turnElementList;
+        }
+
+        public void setPlayerId(final int playerId) {
+            this.playerId = playerId;
+        }
+
+        public void setTurnElementList(final List<TurnElement> turnElementList) {
+            this.turnElementList = turnElementList;
         }
 
     }
 
-    public List<TurnElement> getTurnElements(GameMap gameMap) {
-        List<TurnElement> turnElementList = new ArrayList<>();
+    public class TurnElement {
+        int count;
+        int player;
+        int x;
+        int y;
+        public TurnElement(final int x, final int y, final int player, final int count){
+            this.x = x;
+            this.y = y;
+            this.player = player;
+            this.count = count;
+        }
 
-        for (Map.Entry<Coordinates, GameField> entry : gameMap.entrySet()) {
-            Coordinates coordinates = entry.getKey();
-            GameField gameField = entry.getValue();
+        public int getCount() {
+            return this.count;
+        }
 
-            int x = coordinates.getX();
-            int y = coordinates.getY();
-            int player = gameField.getPlayer();
-            int count = gameField.getAmount();
+        public int getPlayer() {
+            return this.player;
+        }
 
-            TurnElement turnElement = new TurnElement(x, y, player, count);
+        public int getX() {
+            return this.x;
+        }
+
+        public int getY() {
+            return this.y;
+        }
+
+        public void setCount(final int count) {
+            this.count = count;
+        }
+
+        public void setPlayer(final int player) {
+            this.player = player;
+        }
+
+        public void setX(final int x) {
+            this.x = x;
+        }
+
+        public void setY(final int y) {
+            this.y = y;
+        }
+    }
+
+    public List<TurnElement> getTurnElements(final GameMap gameMap) {
+        final List<TurnElement> turnElementList = new ArrayList<>();
+
+        for (final Map.Entry<Coordinates, GameField> entry : gameMap.entrySet()) {
+            final Coordinates coordinates = entry.getKey();
+            final GameField gameField = entry.getValue();
+
+            final int x = coordinates.getX();
+            final int y = coordinates.getY();
+            final int player = gameField.getPlayer();
+            final int count = gameField.getAmount();
+
+            final TurnElement turnElement = new TurnElement(x, y, player, count);
             turnElementList.add(turnElement);
         }
 
@@ -115,30 +107,30 @@ public class ApiPlayer implements Player {
 
     @Override
     public List<Move> turn(final GameMap map, final int playerId) {
-        String apiUrl = "http://localhost:8080/";
+        final String apiUrl = "http://localhost:8080/";
 
-        TurnDto requestbody = new TurnDto(getTurnElements(map), playerId);
+        final TurnDto requestbody = new TurnDto(this.getTurnElements(map), playerId);
         System.out.println(requestbody.toString());
-        
-        HttpClient httpClient = HttpClient.newHttpClient();
-        Gson gson = new Gson();
+
+        final HttpClient httpClient = HttpClient.newHttpClient();
+        final Gson gson = new Gson();
         List<Move> moves = new ArrayList<Move>();
 
-        HttpRequest request = HttpRequest.newBuilder()
+        final HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(apiUrl))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(requestbody)))
                 .build();
 
         try {
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
-            String responseBody = response.body();
+            final String responseBody = response.body();
             System.out.println("Response: " + responseBody);
-            Type listOfMyClassObject = new TypeToken<ArrayList<Move>>() {}.getType();
+            final Type listOfMyClassObject = new TypeToken<ArrayList<Move>>() {}.getType();
             moves = gson.fromJson(responseBody, listOfMyClassObject);
 
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
         }
 
